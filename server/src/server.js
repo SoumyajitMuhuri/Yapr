@@ -8,7 +8,9 @@ import path from "path";
 
 import User from "./models/user.model.js"
 import { connectDB } from "./lib/db.js";
-import { clerkMiddleware } from "@clerk/express"
+import { clerkMiddleware } from "@clerk/express";
+import clerkWebhook from "./webhooks/clerk.webhook.js";
+
 
 import job from "./lib/cron.js";
 
@@ -18,6 +20,8 @@ const PORT=process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const publicDir = path.join(process.cwd(), "public")
+
+app.use("/api/webhooks/clerk",express.raw({type: "application/json" }), clerkWebhook);
 
 app.use(express.json())
 app.use(cors({origin:CLIENT_URL, credentials:true}));
