@@ -14,8 +14,8 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 
 import job from "./lib/cron.js";
+import { app,server } from "./lib/socket.js";
 
-const app=express();
 
 const PORT=process.env.PORT;
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -45,7 +45,7 @@ if(fs.existsSync(publicDir)){
 
 }
 
-app.listen(PORT, ()=>{
+server.listen(PORT, ()=>{
     connectDB();
     console.log(`Server is running on port http://localhost:${PORT}`);
     process.env.NODE_ENV==="production" && job.start();

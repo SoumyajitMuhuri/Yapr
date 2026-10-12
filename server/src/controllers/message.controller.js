@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { hasImageKitKey, uploadChatMedia } from "../lib/imagekit.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 
 export async function getUserList(req,res) {
     try {
@@ -92,7 +93,11 @@ export async function sendMessage(req, res) {
 
         await newMessage.save();
 
-        //todo:socketIO
+        const receiverScoketId = getReceiverSocketId(receiverId);
+
+        if(receiverScoketId){
+            io.to(receiverScoketId).emit("newMessage", newMessage);
+        }
 
         res.status(201).json({newMessage})
         
