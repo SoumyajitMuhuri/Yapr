@@ -1,12 +1,16 @@
+import { useTheme } from "../../context/theme";
+
 export const APP_NAME = "Yapr.";
 
-export function AppLogo({ className = "", size = 32, alt = APP_NAME }) {
+export function AppLogo({ className = "", alt = APP_NAME }) {
+  const { theme } = useTheme();
+  const logo = theme === "dark" ? "/logo-dark.png" : "/logo-light.png"
   return (
     <img
-      src="/logo.png"
+      src={logo}
       alt={alt}
-      width={size}
-      height={size}
+      width= "120"
+      height="120"
       className={`shrink-0 object-contain select-none ${className}`}
       draggable={false}
     />
