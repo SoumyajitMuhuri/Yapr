@@ -1,7 +1,7 @@
 import React from 'react'
 import AuthHeader from '../components/auth/AuthHeader'
 import { AuthAnimPanel } from '../components/auth/AuthAnimPanel'
-import AuthActionPanel from '../components/auth/AuthActionPanel'
+import { AuthActionPanel } from '../components/auth/AuthActionPanel'
 import { useWallpaper } from '../context/wallpaper'
 
 function AuthPage() {
