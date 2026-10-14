@@ -1,7 +1,7 @@
 import { ThemeProvider } from "./context/ThemeContext";
 import { WallpaperProvider } from "./context/WallpaperContext";
-import { Routes, Route, Navigate } from "react-router";
-import { useAuth } from "@clerk/react";
+import { Routes, Route, Navigate, useNavigate } from "react-router";
+import { useAuth, HandleSSOCallback } from "@clerk/react";
 import { Toaster } from "react-hot-toast"
 
 import ChatPage from "./pages/ChatPage";
@@ -16,6 +16,26 @@ function AppContent() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
+
+  function SSOCallback() {
+    const navigate = useNavigate();
+
+    return (
+      <HandleSSOCallback
+        navigateToApp={({ decorateUrl }) => {
+          const url = decorateUrl("/");
+
+          if (url.startsWith("http")) {
+            window.location.href = url;
+          } else {
+            navigate(url, { replace: true });
+          }
+        }}
+        navigateToSignIn={() => navigate("/auth", { replace: true })}
+        navigateToSignUp={() => navigate("/auth", { replace: true })}
+      />
+    );
+  }
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -38,6 +58,7 @@ function AppContent() {
             path="/auth"
             element={!isSignedIn ? <AuthPage /> : <Navigate to="/" replace />}
           />
+          <Route path="/sso-callback" element={<SSOCallback />} />
         </Routes>
         <Toaster />
       </WallpaperProvider>
