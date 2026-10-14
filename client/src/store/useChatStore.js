@@ -66,19 +66,27 @@ export const useChatStore = create(
       },
 
       sendMessage: async (messageData) => {
-        const { selectedUser, messages } = get();
+        const { selectedUser } = get();
         if (!selectedUser) return false;
 
         try {
-          const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-          set({ messages: [...messages, res.data], composerText: "" });
+          const res = await axiosInstance.post(
+            `/messages/send/${selectedUser._id}`,
+            messageData
+          );
+
+          set((state) => ({
+            messages: [...state.messages, res.data.newMessage],
+            composerText: "",
+          }));
+
           get().getConversations();
           return true;
         } catch (error) {
           toast.error(error.response?.data?.message || "Failed to send message");
           return false;
         }
-      },
+      },,
 
       subscribeToMessages: (userId) => {
         if (!userId) return;
