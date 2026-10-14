@@ -22,7 +22,7 @@ function AppContent() {
 
     if (isSignedIn) checkAuth();
     else clearAuth()
-  }, checkAuth, clearAuth, isLoaded, isSignedIn)
+  }, [checkAuth, clearAuth, isLoaded, isSignedIn])
 
   if (!isLoaded || (isSignedIn && isCheckingAuth)) return <PageLoader />;
 

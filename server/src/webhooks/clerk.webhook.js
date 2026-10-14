@@ -33,15 +33,15 @@ router.post("/", async (req,res) => {
         user.username ||
         email?.split("@")[0];
 
-        await User.findOneAndUpdate({clerkID:user.id},
-            {clerkID: user.id, email, fullName, profilePic:user.image_url},
+        await User.findOneAndUpdate({clerkId:user.id},
+            {clerkId: user.id, email, fullName, pfp:user.image_url},
             {new:true, upsert: true, setDefaultsOnInsert: true },
         );
     }
 
     if(evt.type=== "user.deleted"){
         if(evt.data.id){
-            await User.findOneAndDelete({clerkID:evt.data.id});
+            await User.findOneAndDelete({clerkId:evt.data.id});
         }
     }
     res.status(200).json({ received:true });
