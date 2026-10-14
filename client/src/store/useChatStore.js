@@ -86,7 +86,7 @@ export const useChatStore = create(
           toast.error(error.response?.data?.message || "Failed to send message");
           return false;
         }
-      },,
+      },
 
       subscribeToMessages: (userId) => {
         if (!userId) return;
