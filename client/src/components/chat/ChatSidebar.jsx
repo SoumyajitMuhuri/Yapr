@@ -1,4 +1,4 @@
-import { getInitials, useSelectedChat } from "../../hooks/useSelectedChat";
+import { getInitials, useSelectedConversation } from "../../hooks/useSelectedConversation";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useChatStore } from "../../store/useChatStore";
 import { APP_NAME, AppLogo } from "../assets/AppLogo";
@@ -41,7 +41,7 @@ function ChatSidebar() {
 
   const onlineUsers = useAuthStore((state) => state.onlineUsers);
 
-  const { activeConversationId, isLargeScreen } = useSelectedChat();
+  const { activeConversationId, isLargeScreen } = useSelectedConversation();
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 

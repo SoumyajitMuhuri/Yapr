@@ -1,8 +1,11 @@
 import { useWallpaper } from "../context/wallpaper";
 import { useChatStore } from "../store/useChatStore";
-import { useSelectedChat } from "../hooks/useSelectedChat";
+import { useSelectedConversation } from "../hooks/useSelectedConversation";
 import { useEffect } from "react";
 import ChatSidebar from "../components/chat/ChatSidebar";
+import { ChatHeader } from "../components/chat/ChatHeader";
+import { MessageList } from "../components/chat/MessageList";
+import { ChatComposer } from "../components/chat/ChatComposer";
 
 function Chatpage() {
 
@@ -14,7 +17,7 @@ function Chatpage() {
   const subscribeToMessages = useChatStore((state) => state.subscribeToMessages);
   const unsubscribeFromMessages = useChatStore((state) => state.unsubscribeFromMessages);
 
-  const { activeConversation, activeConversationId, isLargeScreen } = useSelectedChat();
+  const { activeConversation, activeConversationId, isLargeScreen } = useSelectedConversation();
 
 
 
@@ -42,12 +45,9 @@ function Chatpage() {
           className={`flex-1 flex-col overflow-hidden 
             ${!isLargeScreen && !activeConversationId ? "hidden lg:flex" : "flex"
             }`}>
-
-          
-          
-          
-
-          {activeConversation ? <ChatComposer /> : null}
+              <ChatHeader />
+              <MessageList />
+              {activeConversation? <ChatComposer /> : null }
         </div>
       </div>
     </div>
