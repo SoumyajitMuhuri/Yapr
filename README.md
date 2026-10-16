@@ -20,6 +20,12 @@ Yapr is a real-time messaging app with a React client and an Express API. It sup
 - **Server:** Node.js, Express, Socket.IO
 - **Data and services:** MongoDB with Mongoose, Clerk, ImageKit
 
+## Services
+
+- **Authentication:** Clerk handles sign-in and identity. The server verifies authenticated requests and syncs user records through Clerk webhooks.
+- **Images and media:** ImageKit stores uploaded chat images and videos and provides the URLs used in messages.
+- **Real-time connections:** Socket.IO delivers new messages and online status updates between connected users.
+
 ## Requirements
 
 - Node.js and npm
