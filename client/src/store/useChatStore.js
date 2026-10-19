@@ -16,6 +16,7 @@ export const useChatStore = create(
       isUsersLoading: false,
       isMessagesLoading: false,
       activeConversationId: null,
+      unreadByConversation: {},
       searchQuery: "",
       sidebarTab: "chats",
       composerText: "",
@@ -88,18 +89,36 @@ export const useChatStore = create(
         }
       },
 
-      subscribeToMessages: (userId) => {
-        if (!userId) return;
-
+      subscribeToMessages: () => {
         const socket = useAuthStore.getState().socket;
         if (!socket) return;
 
         socket.off("newMessage");
         socket.on("newMessage", (newMessage) => {
-          // if im not the receiver don't do anything just return
-          if (String(newMessage.senderId) !== String(userId)) return;
+          const senderId = String(newMessage.senderId);
+          const state = get();
+          const isActiveConversation = senderId === String(state.activeConversationId);
 
-          set({ messages: [...get().messages, newMessage] });
+          if (isActiveConversation) {
+            set((currentState) => ({
+              messages: [...currentState.messages, newMessage],
+            }));
+          } else {
+            set((currentState) => ({
+              unreadByConversation: {
+                ...currentState.unreadByConversation,
+                [senderId]: (currentState.unreadByConversation[senderId] || 0) + 1,
+              },
+            }));
+
+            const sender = [...state.users, ...state.conversations].find(
+              (user) => String(user._id) === senderId,
+            );
+            const preview =
+              newMessage.text ||
+              (newMessage.image ? "Photo" : newMessage.video ? "Video" : "New message");
+            toast(`${sender?.fullName || "New message"}: ${preview}`);
+          }
 
           get().getConversations();
         });
@@ -115,6 +134,11 @@ export const useChatStore = create(
       setActiveConversationId: (activeConversationId) => {
         set((state) => ({
           activeConversationId,
+          unreadByConversation: Object.fromEntries(
+            Object.entries(state.unreadByConversation).filter(([conversationId]) =>
+              conversationId !== String(activeConversationId),
+            ),
+          ),
           selectedUser:
             state.users.find((user) => user._id === activeConversationId) ||
             state.conversations.find((user) => user._id === activeConversationId) ||
