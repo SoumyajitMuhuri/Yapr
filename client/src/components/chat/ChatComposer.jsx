@@ -21,8 +21,7 @@ export function ChatComposer() {
   };
 
   const handleSend = async () => {
-    const didSendMessage = await sendTextMessage(activeConversationId);
-    if (didSendMessage) playSoundIfEnabled();
+    await sendTextMessage(activeConversationId);
   };
 
   const handleComposerTextChange = (event) => {
@@ -35,12 +34,10 @@ export function ChatComposer() {
     event.target.value = "";
     if (!file) return;
 
-    const didSendMessage = await sendMediaMessage({
+    await sendMediaMessage({
       conversationId: activeConversationId,
       file,
     });
-
-    if (didSendMessage) playSoundIfEnabled();
   };
 
   return (

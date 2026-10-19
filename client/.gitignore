@@ -25,4 +25,4 @@ dist-ssr
 
 
 .env
-./public/demo_assets
+/public/demo_assets

@@ -3,6 +3,11 @@ import { persist } from "zustand/middleware";
 
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
+import {
+  playNotificationSound,
+  playReceivedSound,
+  playSentSound,
+} from "../hooks/useEventSound";
 import toast from "react-hot-toast";
 
 export const useChatStore = create(
@@ -76,6 +81,8 @@ export const useChatStore = create(
             messageData
           );
 
+          if (get().isSoundEnabled) playSentSound();
+
           set((state) => ({
             messages: [...state.messages, res.data.newMessage],
             composerText: "",
@@ -103,6 +110,7 @@ export const useChatStore = create(
             set((currentState) => ({
               messages: [...currentState.messages, newMessage],
             }));
+            if (state.isSoundEnabled) playReceivedSound();
           } else {
             set((currentState) => ({
               unreadByConversation: {
@@ -117,6 +125,7 @@ export const useChatStore = create(
             const preview =
               newMessage.text ||
               (newMessage.image ? "Photo" : newMessage.video ? "Video" : "New message");
+            if (state.isSoundEnabled) playNotificationSound();
             toast(`${sender?.fullName || "New message"}: ${preview}`);
           }
 
