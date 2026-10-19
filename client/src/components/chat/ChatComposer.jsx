@@ -75,7 +75,7 @@ export function ChatComposer() {
         <TextArea
           fullWidth
           variant="secondary"
-          placeholder="Yapr."
+          placeholder="Message..."
           rows={1}
           value={composerText}
           onChange={handleComposerTextChange}
