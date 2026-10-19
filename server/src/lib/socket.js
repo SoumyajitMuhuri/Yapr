@@ -11,8 +11,8 @@ const io=new Server(server, { cors:{ origin: [allowedOrigin]} });
 
 const userSocketMap = {};
 
-function getReceiverSocketId(userId){
-    return userSocketMap[userId];
+function getReceiverSocketIds(userId){
+    return [...(userSocketMap[userId] || [])];
 }
 
 
@@ -21,14 +21,20 @@ function getReceiverSocketId(userId){
 io.on("connection", (socket)=>{
     const userId = socket.handshake.query.userId;
 
-    if(userId) userSocketMap[userId] = socket.id;
+    if(userId){
+        userSocketMap[userId] ||= new Set();
+        userSocketMap[userId].add(socket.id);
+    }
 
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", ()=>{
-        if(userId) delete userSocketMap[userId];
+        if(userId){
+            userSocketMap[userId]?.delete(socket.id);
+            if(userSocketMap[userId]?.size === 0) delete userSocketMap[userId];
+        }
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 
-export { app,server,io,getReceiverSocketId };
+export { app,server,io,getReceiverSocketIds };
