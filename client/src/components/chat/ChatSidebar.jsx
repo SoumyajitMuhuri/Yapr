@@ -13,6 +13,7 @@ function mapUserForList(user, onlineUsers) {
     conversationId: user._id,
     id: user._id,
     name: user.fullName,
+    unreadCount: user.unreadCount || 0,
     avatarUrl: user.pfp,
     initials: getInitials(user.fullName),
     isOnline: onlineUsers.includes(user._id),
@@ -27,7 +28,6 @@ function mapUserForList(user, onlineUsers) {
 
 function ChatSidebar() {
   const conversations = useChatStore((state) => state.conversations);
-  const unreadByConversation = useChatStore((state) => state.unreadByConversation);
   const users = useChatStore((state) => state.users);
 
   const searchQuery = useChatStore((state) => state.searchQuery);
@@ -124,7 +124,7 @@ function ChatSidebar() {
               <ConversationRow
                 key={conversation.id}
                 user={conversation}
-                unreadCount={unreadByConversation[conversation.id] || 0}
+                unreadCount={conversation.unreadCount || 0}
                 selected={conversation.id === activeConversationId}
                 onSelect={() => setActiveConversationId(conversation.id)}
               />

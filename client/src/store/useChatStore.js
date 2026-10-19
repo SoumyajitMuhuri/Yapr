@@ -21,7 +21,6 @@ export const useChatStore = create(
       isUsersLoading: false,
       isMessagesLoading: false,
       activeConversationId: null,
-      unreadByConversation: {},
       searchQuery: "",
       sidebarTab: "chats",
       composerText: "",
@@ -63,7 +62,10 @@ export const useChatStore = create(
         set({ isMessagesLoading: true });
         try {
           const res = await axiosInstance.get(`/messages/${userId}`);
-          set({ messages: res.data });
+          if (String(get().activeConversationId) === String(userId)) {
+            set({ messages: res.data });
+          }
+          get().getConversations();
         } catch (error) {
           toast.error(error.response?.data?.message || "Failed to load messages");
         } finally {
@@ -107,18 +109,9 @@ export const useChatStore = create(
           const isActiveConversation = senderId === String(state.activeConversationId);
 
           if (isActiveConversation) {
-            set((currentState) => ({
-              messages: [...currentState.messages, newMessage],
-            }));
             if (state.isSoundEnabled) playReceivedSound();
+            get().getMessages(senderId);
           } else {
-            set((currentState) => ({
-              unreadByConversation: {
-                ...currentState.unreadByConversation,
-                [senderId]: (currentState.unreadByConversation[senderId] || 0) + 1,
-              },
-            }));
-
             const sender = [...state.users, ...state.conversations].find(
               (user) => String(user._id) === senderId,
             );
@@ -129,7 +122,7 @@ export const useChatStore = create(
             toast(`${sender?.fullName || "New message"}: ${preview}`);
           }
 
-          get().getConversations();
+          if (!isActiveConversation) get().getConversations();
         });
       },
 
@@ -143,11 +136,6 @@ export const useChatStore = create(
       setActiveConversationId: (activeConversationId) => {
         set((state) => ({
           activeConversationId,
-          unreadByConversation: Object.fromEntries(
-            Object.entries(state.unreadByConversation).filter(([conversationId]) =>
-              conversationId !== String(activeConversationId),
-            ),
-          ),
           selectedUser:
             state.users.find((user) => user._id === activeConversationId) ||
             state.conversations.find((user) => user._id === activeConversationId) ||

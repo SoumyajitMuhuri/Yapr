@@ -27,11 +27,26 @@ export async function getConversations(req,res) {
             { $group:{
                 _id: {$cond: [{ $eq: ["$senderId", loggedInUserID]}, "$receiverId", "$senderId"] },
                 lastMessageAt:{ $max:"$createdAt" },
+                unreadCount: {
+                    $sum: {
+                        $cond: [
+                            {
+                                $and: [
+                                    { $eq: ["$receiverId", loggedInUserID] },
+                                    { $eq: [{ $type: "$readAt" }, "null"] },
+                                ],
+                            },
+                            1,
+                            0,
+                        ],
+                    },
+                },
             },
         },
         { $sort: { lastMessageAt: -1 }},
         {$lookup: { from: "users", localField:"_id", foreignField: "_id", as:"user" } },
         { $unwind: "$user" },
+        { $set: { "user.unreadCount": "$unreadCount" } },
         { $replaceRoot: { newRoot: "$user" } },
         {$project: {clerkId:0 } },
          ]);
@@ -49,6 +64,11 @@ export async function getMessages(req, res) {
     try {
         const {id: userToChatId } = req.params;
         const currentUserID = req.user._id;
+
+        await Message.updateMany(
+            { senderId: userToChatId, receiverId: currentUserID, readAt: null },
+            { $set: { readAt: new Date() } },
+        );
 
         const messages = await Message.find({
             $or:[{senderId:currentUserID, receiverId: userToChatId},

@@ -19,7 +19,11 @@ const messageSchema = new mongoose.Schema({
     },
     video:{
         type:String,
-    }
+    },
+    readAt: {
+        type: Date,
+        default: null,
+    },
 },{timestamps:true})
 
 const Message = mongoose.model("Message",messageSchema)
