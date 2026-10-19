@@ -31,7 +31,8 @@ export async function getConversations(req,res) {
         },
         { $sort: { lastMessageAt: -1 }},
         {$lookup: { from: "users", localField:"_id", foreignField: "_id", as:"user" } },
-        {$replaceRoot: {newRoot: {$first: "$user"} } },
+        { $unwind: "$user" },
+        { $replaceRoot: { newRoot: "$user" } },
         {$project: {clerkId:0 } },
          ]);
 
