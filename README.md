@@ -86,8 +86,10 @@ Yapr is a real-time messaging app with a React client and an Express API. It sup
 - `GET /api/auth/check` — check the authenticated user
 - `GET /api/messages/users` — list other users
 - `GET /api/messages/conversations` — list conversations
-- `GET /api/messages/:id` — load messages with a user
+- `GET /api/messages/:id?limit=50&cursor=...` — load a chronological page of up to 50 messages with a user (maximum 100); use `nextCursor` for the next older page
 - `POST /api/messages/send/:id` — send a message, optionally with media
 - `POST /api/webhooks/clerk` — Clerk user event webhook
 
 Message and user endpoints require authentication.
+
+Message sends are limited per authenticated user to 60 requests per minute, with multipart media uploads additionally limited to 10 per 15 minutes. Uploads accept JPEG, PNG, WebP, GIF, AVIF, MP4, QuickTime, or WebM content, validate file signatures, and are capped at 50 MiB. Message text is capped at 5,000 characters. Rate-limit counters are in-memory per server process; multi-instance deployments should use a shared rate-limit store.
