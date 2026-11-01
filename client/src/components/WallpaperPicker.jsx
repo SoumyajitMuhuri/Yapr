@@ -19,7 +19,7 @@ function WallpaperThumb({ wallpaper, selected, onSelect }) {
       aria-pressed={selected}
     >
       <img
-        src={wallpaper.url}
+        src={wallpaper.thumbnailUrl}
         alt=""
         width={320}
         height={240}

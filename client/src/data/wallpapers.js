@@ -24,6 +24,7 @@ export const WALLPAPERS = WALLPAPER_FILES.map((fileName) => {
     id: name,
     label: name,
     url: `/wallpapers/${fileName}`,
+    thumbnailUrl: `/wallpapers/thumbs/${fileName}`,
   };
 });
 
