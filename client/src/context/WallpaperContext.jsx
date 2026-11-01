@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { frameStyleFromUrl, getWallpaperById } from "../data/wallpapers";
+import {
+  DEFAULT_WALLPAPER_ID,
+  frameStyleFromUrl,
+  getWallpaperById,
+  WALLPAPERS,
+} from "../data/wallpapers";
 import { WallpaperContext } from "./wallpaper";
 
 const STORAGE_KEY = "chat-wallpaper-id";
 
 function readStoredWallpaperId() {
   const wallpaperId = localStorage.getItem(STORAGE_KEY);
-  if (wallpaperId) return wallpaperId;
-
-  return "sonoma-horizon";
+  return WALLPAPERS.some((wallpaper) => wallpaper.id === wallpaperId)
+    ? wallpaperId
+    : DEFAULT_WALLPAPER_ID;
 }
 
 export function WallpaperProvider({ children }) {
